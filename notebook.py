@@ -28,7 +28,43 @@ def enmascarar_fecha(texto):
     else:
         edadVar.set("")
     return True
- 
+
+#lista de pacientes
+pacientes_data=[]
+def cargar_treeview():
+    #limpiar treeview
+    for paciente in treeview.get_children():
+        treeview.delete(paciente)
+    #insertar cada pacientes 
+    for i, item in enumerate(pacientes_data):
+        treeview.insert(
+        "","end",id=str(i),
+           values=(
+            item["Nombre"],
+            item["Fecha de nacimiento"],
+            item["Edad"],
+            item["Genero"],
+            item["Grupo Sanguineo"],
+            item["Tipo de Seguro"],
+            item["Centro Medico"]
+            ) 
+         )
+
+def registrar_paciente():
+    #crea un diccionario con los datos del paciente
+    paciente={
+        "Nombre": nombreP.get(),
+        "Fecha de nacimiento": fechaN.get(),
+        "Edad": edadVar.get(),
+        "Genero": genero.get(),
+        "Grupo Sanguineo": entryGrupoS.get(),
+        "Tipo de Seguro": tipoSeguro.get(), 
+        "Centro Medico": centroM.get()
+    }
+    #agregar paciente a la lista
+    pacientes_data.append(paciente)
+    #Cargar treeview para mostrar los datos guardados
+    cargar_treeview()
 # Crear ventana principal
 ventanaPrincipal = tk.Tk()
 ventanaPrincipal.title("Libro de Pacientes y Doctores")
@@ -92,12 +128,12 @@ comboCentroM.grid(row=7, column=1, padx=5, pady=5, sticky="w")
 btnFrame = tk.Frame(framePacientes)
 btnFrame.grid(row=8, column=1, columnspan=2, pady=5, sticky="w")
 # Botón registrar
-btnRegistrar = tk.Button(btnFrame, text="Registrar",bg="green", fg="white", command="")
+btnRegistrar = tk.Button(btnFrame, text="Registrar", bg="green", fg="white", command=registrar_paciente)
 btnRegistrar.grid(row=0, column=0, padx=5)
 # Botón Eliminar
 btnEliminar = tk.Button(btnFrame, text="Eliminar", bg="red", fg="White", command="")
 btnEliminar.grid(row=0, column=1, padx=5)
-# Crera Treeview para mostrar los pacientes
+# Creara Treeview para mostrar los pacientes
 treeview = ttk.Treeview(framePacientes, columns=("Nombre","FechaN","Edad", "Género", "GrupoS", "TipoS", "CentroM"), show="headings")
 # Definir encabezados
 treeview.heading("Nombre", text="Nombre")
