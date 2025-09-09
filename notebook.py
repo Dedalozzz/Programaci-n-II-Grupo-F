@@ -2,6 +2,16 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+#funcion para guardar doctores
+def guardar_doctores_en_archivo():
+    with open("doctores.txt", "w", encoding="utf-8") as archivo:
+        for doctor in doctores_data:
+            archivo.write(
+                f"{doctor['Nombre']}|"
+                f"{doctor['Especialidad']}|"
+                f"{doctor['Edad']}|"
+                f"{doctor['Teléfono']}\n"
+            )
 #funcion para enmascarar fecha
 def enmascarar_fecha(texto):
     limpio=''.join(filter(str.isdigit,texto))
@@ -58,10 +68,9 @@ def cargar_treeview():
 def cargar_desde_archivo_pacientes():
     try:
         with open("pacientes.txt", "r", encoding="utf-8") as archivo:
+            pacientes_data.clear()
             for linea in archivo:
-                pacientes_data.clear()
-                for linea in archivo:
-                    datos = linea.strip().split("|")
+                datos = linea.strip().split("|")
                 if len(datos) == 7:
                     paciente = {
                         "Nombre": datos[0],
@@ -73,7 +82,7 @@ def cargar_desde_archivo_pacientes():
                         "Centro Medico": datos[6]
                     }
                     pacientes_data.append(paciente)
-                cargar_treeview()
+            cargar_treeview()
     except FileNotFoundError:    
         open("pacientes.txt", "w", encoding="utf-8").close()
 #cargar datos al iniciar
@@ -94,6 +103,7 @@ def registrar_paciente():
     guardar_en_archivo()
     #Cargar treeview para mostrar los datos guardados
     cargar_treeview()
+
 # Crear ventana principal
 ventanaPrincipal = tk.Tk()
 ventanaPrincipal.title("Libro de Pacientes y Doctores")
@@ -226,6 +236,7 @@ treeviewD.column("Edad", width=60)
 treeviewD.column("Teléfono", width=120)
 treeviewD.grid(row=5, column=0, columnspan=4, padx=5, pady=5)
 # Scrollbar vertical para treeview doctores
+doctores_data = []
 scrollbarD = ttk.Scrollbar(frameDoctores, orient="vertical", command=treeviewD.yview)
 treeviewD.configure(yscroll=scrollbarD.set)
 scrollbarD.grid(row=5, column=4, sticky="ns")
