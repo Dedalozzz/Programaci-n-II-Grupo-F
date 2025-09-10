@@ -2,6 +2,17 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+#funcion para registrar doctor
+def registrar_doctor():
+    doctor = {
+        "Nombre": entryNombreD.get(),
+        "Especialidad": especialidadD.get(),
+        "Edad": entryEdadD.get(),
+        "Teléfono": entryTelefonoD.get()
+    }
+    doctores_data.append(doctor)
+    guardar_doctores_en_archivo()
+    treeviewD.insert("", "end", values=(doctor["Nombre"], doctor["Especialidad"], doctor["Edad"], doctor["Teléfono"]))
 #funcion para eliminar paciente
 def eliminar_paciente():
     seleccionado = treeview.selection()
@@ -25,6 +36,38 @@ def guardar_doctores_en_archivo():
                 f"{doctor['Edad']}|"
                 f"{doctor['Teléfono']}\n"
             )
+
+def cargar_doctores_desde_archivo():
+    doctores_data.clear()
+    try:
+        with open("doctores.txt", "r", encoding="utf-8") as archivo:
+            for linea in archivo:
+                datos = linea.strip().split("|")
+                if len(datos) == 4:
+                    doctor = {
+                        "Nombre": datos[0],
+                        "Especialidad": datos[1],
+                        "Edad": datos[2],
+                        "Teléfono": datos[3]
+                    }
+                    doctores_data.append(doctor)
+        treeviewD.delete(*treeviewD.get_children())
+        for doctor in doctores_data:
+            treeviewD.insert("", "end", values=(doctor["Nombre"], doctor["Especialidad"], doctor["Edad"], doctor["Teléfono"]))
+    except FileNotFoundError:
+        open("doctores.txt", "w", encoding="utf-8").close()
+#funcion para eliminar doctor
+def eliminar_doctor():
+    seleccionado = treeviewD.selection()
+    if seleccionado:
+        respuesta = messagebox.askyesno("Confirmar eliminación", "¿Estás seguro de eliminar el doctor seleccionado?")
+        if respuesta:
+            idx = treeviewD.index(seleccionado[0])
+            del doctores_data[idx]
+            guardar_doctores_en_archivo()
+            treeviewD.delete(seleccionado[0])
+    else:
+        messagebox.showwarning("Eliminar", "Selecciona un doctor para eliminar.")
 #funcion para enmascarar fecha
 def enmascarar_fecha(texto):
     limpio=''.join(filter(str.isdigit,texto))
@@ -233,9 +276,21 @@ entryTelefonoD.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 # Frame para botones
 btnFrameD = tk.Frame(frameDoctores)
 btnFrameD.grid(row=4, column=1, columnspan=2, pady=5, sticky="w")
-btnRegistrarD = tk.Button(btnFrameD, text="Registrar", bg="green", fg="white")
+
+def registrar_doctor():
+    doctor = {
+        "Nombre": entryNombreD.get(),
+        "Especialidad": especialidadD.get(),
+        "Edad": entryEdadD.get(),
+        "Teléfono": entryTelefonoD.get()
+    }
+    doctores_data.append(doctor)
+    guardar_doctores_en_archivo()
+    treeviewD.insert("", "end", values=(doctor["Nombre"], doctor["Especialidad"], doctor["Edad"], doctor["Teléfono"]))
+
+btnRegistrarD = tk.Button(btnFrameD, text="Registrar", bg="green", fg="white", command=registrar_doctor)
 btnRegistrarD.grid(row=0, column=0, padx=5)
-btnEliminarD = tk.Button(btnFrameD, text="Eliminar", bg="red", fg="white")
+btnEliminarD = tk.Button(btnFrameD, text="Eliminar", bg="red", fg="white", command=eliminar_doctor)
 btnEliminarD.grid(row=0, column=1, padx=5)
 # Treeview para mostrar doctores
 treeviewD = ttk.Treeview(frameDoctores, columns=("Nombre", "Especialidad", "Edad", "Teléfono"), show="headings")
@@ -254,5 +309,6 @@ scrollbarD = ttk.Scrollbar(frameDoctores, orient="vertical", command=treeviewD.y
 treeviewD.configure(yscroll=scrollbarD.set)
 scrollbarD.grid(row=5, column=4, sticky="ns")
 cargar_desde_archivo_pacientes()#guarda los datos en un txt
+cargar_doctores_desde_archivo()#muestra los doctores guardados en el treeview
 # Iniciar el bucle principal de la interfaz
 ventanaPrincipal.mainloop()
