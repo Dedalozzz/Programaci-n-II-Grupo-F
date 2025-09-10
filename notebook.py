@@ -2,6 +2,19 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+#funcion para eliminar paciente
+def eliminar_paciente():
+    seleccionado = treeview.selection()
+    if seleccionado:
+        respuesta = messagebox.askyesno("Confirmar eliminación", "¿Estás seguro de eliminar el paciente seleccionado?")#pregunta si esta seguro de la eleccion
+        if respuesta:
+            idx = int(seleccionado[0])
+            del pacientes_data[idx]
+            messagebox.showinfo("Eliminar Paciente","Paciente eliminado correctamente")
+            guardar_en_archivo()#Guarda los cambios en el archivo
+            cargar_treeview()
+    else:
+        messagebox.showwarning("Eliminar", "Selecciona un paciente para eliminar.")#opcion default si no hay nada seleccionado
 #funcion para guardar doctores
 def guardar_doctores_en_archivo():
     with open("doctores.txt", "w", encoding="utf-8") as archivo:
@@ -170,9 +183,9 @@ btnFrame.grid(row=8, column=1, columnspan=2, pady=5, sticky="w")
 btnRegistrar = tk.Button(btnFrame, text="Registrar", bg="green", fg="white", command=registrar_paciente)
 btnRegistrar.grid(row=0, column=0, padx=5)
 # Botón Eliminar
-btnEliminar = tk.Button(btnFrame, text="Eliminar", bg="red", fg="White", command="")
+btnEliminar = tk.Button(btnFrame, text="Eliminar", bg="red", fg="White", command=eliminar_paciente)
 btnEliminar.grid(row=0, column=1, padx=5)
-# Creara Treeview para mostrar los pacientes
+# Crear Treeview para mostrar los pacientes
 treeview = ttk.Treeview(framePacientes, columns=("Nombre","FechaN","Edad", "Género", "GrupoS", "TipoS", "CentroM"), show="headings")
 # Definir encabezados
 treeview.heading("Nombre", text="Nombre")
