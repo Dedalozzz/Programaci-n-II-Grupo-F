@@ -277,17 +277,6 @@ entryTelefonoD.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 btnFrameD = tk.Frame(frameDoctores)
 btnFrameD.grid(row=4, column=1, columnspan=2, pady=5, sticky="w")
 
-def registrar_doctor():
-    doctor = {
-        "Nombre": entryNombreD.get(),
-        "Especialidad": especialidadD.get(),
-        "Edad": entryEdadD.get(),
-        "Teléfono": entryTelefonoD.get()
-    }
-    doctores_data.append(doctor)
-    guardar_doctores_en_archivo()
-    treeviewD.insert("", "end", values=(doctor["Nombre"], doctor["Especialidad"], doctor["Edad"], doctor["Teléfono"]))
-
 btnRegistrarD = tk.Button(btnFrameD, text="Registrar", bg="green", fg="white", command=registrar_doctor)
 btnRegistrarD.grid(row=0, column=0, padx=5)
 btnEliminarD = tk.Button(btnFrameD, text="Eliminar", bg="red", fg="white", command=eliminar_doctor)
